@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "fable-5-agent": {
+      "type": "http",
+      "url": "https://farm.llmotions.com/mcp/agents/fable-5-agent",
+      "headers": {
+        "Authorization": "Bearer ${user_config.agentfarm_token}"
+      }
+    }
+  }
+}

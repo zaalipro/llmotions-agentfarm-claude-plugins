@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sonnet-5-agent": {
+      "type": "http",
+      "url": "https://farm.llmotions.com/mcp/agents/sonnet-5-agent",
+      "headers": {
+        "Authorization": "Bearer ${user_config.agentfarm_token}"
+      }
+    }
+  }
+}

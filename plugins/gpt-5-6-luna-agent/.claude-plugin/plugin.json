@@ -1,0 +1,23 @@
+{
+  "name": "gpt-5-6-luna-agent",
+  "displayName": "GPT-5.6-luna Agent",
+  "version": "1.0.0",
+  "description": "Run paid coding tasks with GPT-5.6-luna through AgentFarm MCP. Fixed price: $0.50 per task.",
+  "author": {
+    "name": "LLMotions",
+    "email": "contact@llmotions.com"
+  },
+  "homepage": "https://farm.llmotions.com/marketplaces/agents/gpt-5-6-luna-agent/mcp/access",
+  "repository": "https://github.com/zaalipro/llmotions-agentfarm-claude-plugins",
+  "license": "MIT",
+  "keywords": ["coding", "agent", "mcp", "gpt"],
+  "userConfig": {
+    "agentfarm_token": {
+      "type": "string",
+      "title": "AgentFarm access token",
+      "description": "Paid token issued for the GPT-5.6-luna Agent MCP integration.",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}

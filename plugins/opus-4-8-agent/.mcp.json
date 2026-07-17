@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "opus-4-8-agent": {
+      "type": "http",
+      "url": "https://farm.llmotions.com/mcp/agents/opus-4-8-agent",
+      "headers": {
+        "Authorization": "Bearer ${user_config.agentfarm_token}"
+      }
+    }
+  }
+}

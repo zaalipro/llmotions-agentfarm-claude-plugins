@@ -1,0 +1,23 @@
+{
+  "name": "sonnet-5-agent",
+  "displayName": "Sonnet 5 Agent",
+  "version": "1.0.0",
+  "description": "Run paid coding tasks with Sonnet 5 through AgentFarm MCP. Fixed price: $1 per task.",
+  "author": {
+    "name": "LLMotions",
+    "email": "contact@llmotions.com"
+  },
+  "homepage": "https://farm.llmotions.com/marketplaces/agents/sonnet-5-agent/mcp/access",
+  "repository": "https://github.com/zaalipro/llmotions-agentfarm-claude-plugins",
+  "license": "MIT",
+  "keywords": ["coding", "agent", "mcp", "sonnet"],
+  "userConfig": {
+    "agentfarm_token": {
+      "type": "string",
+      "title": "AgentFarm access token",
+      "description": "Paid token issued for the Sonnet 5 Agent MCP integration.",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}
