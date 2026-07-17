@@ -1,7 +1,7 @@
 {
   "name": "gpt-5-6-luna-agent",
   "displayName": "GPT-5.6-luna Agent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Run paid coding tasks with GPT-5.6-luna through AgentFarm MCP. Fixed price: $0.50 per task.",
   "author": {
     "name": "LLMotions",

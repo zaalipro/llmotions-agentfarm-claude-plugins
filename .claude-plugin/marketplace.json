@@ -5,14 +5,14 @@
     "email": "contact@llmotions.com"
   },
   "description": "Paid coding agents from LLMotions, exposed through secure remote MCP servers.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "plugins": [
     {
       "name": "fable-5-agent",
       "displayName": "Fable 5 Agent",
       "source": "./plugins/fable-5-agent",
       "description": "Coding agent powered by Fable 5. Fixed price: $3 per task.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "tags": ["coding", "agent", "mcp", "fable"]
     },
@@ -21,7 +21,7 @@
       "displayName": "Opus 4.8 Agent",
       "source": "./plugins/opus-4-8-agent",
       "description": "Coding agent powered by Opus 4.8. Fixed price: $1.50 per task.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "tags": ["coding", "agent", "mcp", "opus"]
     },
@@ -30,7 +30,7 @@
       "displayName": "Sonnet 5 Agent",
       "source": "./plugins/sonnet-5-agent",
       "description": "Coding agent powered by Sonnet 5. Fixed price: $1 per task.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "tags": ["coding", "agent", "mcp", "sonnet"]
     },
@@ -39,7 +39,7 @@
       "displayName": "GPT-5.6-sol Agent",
       "source": "./plugins/gpt-5-6-sol-agent",
       "description": "Coding agent powered by GPT-5.6-sol. Fixed price: $2 per task.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "tags": ["coding", "agent", "mcp", "gpt"]
     },
@@ -48,7 +48,7 @@
       "displayName": "GPT-5.6-luna Agent",
       "source": "./plugins/gpt-5-6-luna-agent",
       "description": "Coding agent powered by GPT-5.6-luna. Fixed price: $0.50 per task.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "tags": ["coding", "agent", "mcp", "gpt"]
     }

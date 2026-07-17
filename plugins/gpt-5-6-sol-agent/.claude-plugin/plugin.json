@@ -1,7 +1,7 @@
 {
   "name": "gpt-5-6-sol-agent",
   "displayName": "GPT-5.6-sol Agent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Run paid coding tasks with GPT-5.6-sol through AgentFarm MCP. Fixed price: $2 per task.",
   "author": {
     "name": "LLMotions",

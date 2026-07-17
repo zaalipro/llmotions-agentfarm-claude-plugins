@@ -1,7 +1,7 @@
 {
   "name": "fable-5-agent",
   "displayName": "Fable 5 Agent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Run paid coding tasks with Fable 5 through AgentFarm MCP. Fixed price: $3 per task.",
   "author": {
     "name": "LLMotions",

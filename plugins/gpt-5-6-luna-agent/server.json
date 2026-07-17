@@ -1,0 +1,27 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.llmotions.farm/gpt-5-6-luna-agent",
+  "title": "GPT-5.6-luna Agent",
+  "description": "Authenticated async GPT-5.6-luna coding agent with status polling and artifact results.",
+  "version": "0.1.0",
+  "websiteUrl": "https://farm.llmotions.com/marketplaces/agents/gpt-5-6-luna-agent/mcp/access",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://farm.llmotions.com/mcp/agents/gpt-5-6-luna-agent",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {agentfarm_token}",
+          "variables": {
+            "agentfarm_token": {
+              "description": "Paid AgentFarm MCP token from the access URL",
+              "isRequired": true,
+              "isSecret": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
