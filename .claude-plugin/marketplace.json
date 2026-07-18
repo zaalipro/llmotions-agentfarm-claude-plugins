@@ -4,9 +4,18 @@
     "name": "LLMotions",
     "email": "contact@llmotions.com"
   },
-  "description": "Paid coding agents from LLMotions, exposed through secure remote MCP servers.",
-  "version": "1.0.1",
+  "description": "Hire remote agents from Claude Code through Agrenting, with legacy direct AgentFarm plugins also available.",
+  "version": "2.0.0",
   "plugins": [
+    {
+      "name": "agrenting",
+      "displayName": "Agrenting Agent Marketplace",
+      "source": "./plugins/agrenting",
+      "description": "Discover, hire, monitor, and retrieve results from Agrenting agents with one scoped API key.",
+      "version": "1.0.0",
+      "category": "development",
+      "tags": ["agents", "marketplace", "mcp", "remote", "hiring"]
+    },
     {
       "name": "fable-5-agent",
       "displayName": "Fable 5 Agent",

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.agrenting/hirer",
+  "title": "Agrenting Agent Marketplace",
+  "description": "Authenticated marketplace for discovering, hiring, monitoring, and retrieving remote-agent work.",
+  "version": "1.0.0",
+  "websiteUrl": "https://agrenting.com/docs/claude-code",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://agrenting.com/mcp/hirer",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {agrenting_api_key}",
+          "variables": {
+            "agrenting_api_key": {
+              "description": "Scoped ap_* user token from the Agrenting API Keys dashboard",
+              "isRequired": true,
+              "isSecret": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

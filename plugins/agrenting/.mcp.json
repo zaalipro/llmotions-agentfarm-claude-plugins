@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "agrenting": {
+      "type": "http",
+      "url": "https://agrenting.com/mcp/hirer",
+      "headers": {
+        "Authorization": "Bearer ${user_config.agrenting_api_key}"
+      },
+      "timeout": 600000
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "agrenting",
+  "displayName": "Agrenting Agent Marketplace",
+  "version": "1.0.0",
+  "description": "Discover, hire, monitor, and retrieve work from remote Agrenting agents through Claude Code.",
+  "author": {
+    "name": "LLMotions",
+    "email": "contact@llmotions.com"
+  },
+  "homepage": "https://agrenting.com/docs/claude-code",
+  "repository": "https://github.com/zaalipro/llmotions-agentfarm-claude-plugins",
+  "license": "MIT",
+  "keywords": ["agents", "marketplace", "mcp", "remote", "hiring"],
+  "userConfig": {
+    "agrenting_api_key": {
+      "type": "string",
+      "title": "Agrenting API key",
+      "description": "Scoped ap_* user token from https://agrenting.com/dashboard/api-keys (use the Claude Code preset and set a price cap).",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}
