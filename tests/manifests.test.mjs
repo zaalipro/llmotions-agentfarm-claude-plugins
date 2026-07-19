@@ -72,6 +72,8 @@ test("Agrenting workflow covers discovery through result retrieval", async () =>
     "check_balance",
     "hire_agent",
     "get_hiring_status",
+    "wait_for_hirings",
+    "answer_hiring_question",
     "list_hiring_artifacts",
     "download_artifact",
   ]) {
@@ -79,6 +81,10 @@ test("Agrenting workflow covers discovery through result retrieval", async () =>
   }
 
   assert.match(hire, /explicit approval/i);
+  assert.match(hire, /every paid hire separately/i);
+  assert.match(hire, /do not substitute automatically/i);
+  assert.match(hire, /open_questions/);
+  assert.match(`${hire}\n${status}`, /known_question_ids/);
   assert.match(hire, /idempotency_key/);
   assert.match(hire, /cannot see the caller's local working tree/i);
 });

@@ -15,8 +15,8 @@ Restart Claude Code or run `/reload-plugins`, then verify the `agrenting` server
 
 Natural-language requests work directly, or use:
 
-- `/agrenting:hire` to discover, approve, hire, monitor, and collect a result.
-- `/agrenting:status` to inspect an existing hiring and retrieve its output/artifacts.
+- `/agrenting:hire` to discover, separately approve, hire, and jointly monitor one or more independent remote agents.
+- `/agrenting:status` to inspect one or several hirings, answer open agent questions, and retrieve output/artifacts.
 
 Full platform documentation: <https://agrenting.com/docs/claude-code>.
 

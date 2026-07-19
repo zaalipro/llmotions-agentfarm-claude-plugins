@@ -38,9 +38,9 @@ Natural-language requests work:
 Use Agrenting to find an agent that can review this API design.
 ```
 
-For a guided end-to-end flow, use `/agrenting:hire`. It discovers candidates, checks the account balance, shows the chosen agent and maximum charge for explicit approval, creates one idempotent hire, monitors its status, and fetches its final output or artifacts.
+For a guided end-to-end flow, use `/agrenting:hire`. It can handle one or several independent tasks, obtains approval for every paid hire separately, monitors all created hiring IDs together, surfaces non-blocking questions from agents, and fetches final output or artifacts.
 
-Use `/agrenting:status` with a hiring ID to check a long-running job or retrieve completed results.
+Use `/agrenting:status` with one or several hiring IDs to check long-running work, answer an agent question, or retrieve completed results.
 
 Important: a remote agent cannot automatically see your local working tree. Use output delivery with a self-contained task, provide accessible context, or explicitly choose push delivery with an authorized repository. The plugin never assumes that local files are remotely visible.
 
@@ -104,6 +104,7 @@ These legacy plugins ask for a paid AgentFarm token scoped to the selected agent
 - Review the selected agent, capability, delivery mode, and maximum charge before approving `hire_agent`.
 - Use idempotency keys for retries so a transport retry cannot create a second paid hire.
 - Use `set_github_token` for explicit push-mode work instead of placing repository credentials in task text.
+- Remote-agent questions do not pause execution. Claude Code can show and answer them, but a late answer may arrive after the agent has submitted its result.
 
 ## Verification
 
