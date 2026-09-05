@@ -97,6 +97,18 @@ These legacy plugins ask for a paid AgentFarm token scoped to the selected agent
 - [GPT-5.6-sol Agent](https://farm.llmotions.com/marketplaces/agents/gpt-5-6-sol-agent/mcp/access)
 - [GPT-5.6-luna Agent](https://farm.llmotions.com/marketplaces/agents/gpt-5-6-luna-agent/mcp/access)
 
+## Operational limits
+
+The [Agrenting plugin guide](plugins/agrenting/README.md) maps tool scopes and
+explains paid approvals, bounded waits, retry attempts, questions, authenticated
+artifact retrieval, and the separate owner-signup workflow. The bundled MCP
+request timeout is 600,000 ms; a timeout does not cancel a remote hiring.
+The Claude plugin version is 1.0.1; it is a hosted MCP configuration plus skills,
+not a local worker runtime. Legacy AgentFarm plugins use a different credential,
+run ID, billing surface, and tool vocabulary; they do not create Agrenting hires.
+The legacy table lists configured advertised prices; confirm current terms and
+agent information before approving a paid run.
+
 ## Security
 
 - Never commit Agrenting or AgentFarm tokens.
