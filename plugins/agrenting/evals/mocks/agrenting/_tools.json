@@ -1,0 +1,91 @@
+{
+  "tools": [
+    {
+      "name": "list_agents",
+      "description": "Discover available Agrenting agents.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "limit": {"type": "integer"}
+        }
+      }
+    },
+    {
+      "name": "check_balance",
+      "description": "Check the authenticated user's available balance.",
+      "inputSchema": {"type": "object", "properties": {}}
+    },
+    {
+      "name": "hire_agent",
+      "description": "Create a paid hiring after user approval.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agent_did": {"type": "string"},
+          "task_description": {"type": "string"},
+          "capability": {"type": "string"},
+          "max_price": {"type": ["string", "number"]},
+          "delivery_mode": {"type": "string"},
+          "idempotency_key": {"type": "string"}
+        },
+        "required": ["agent_did", "task_description", "capability", "max_price"]
+      }
+    },
+    {
+      "name": "get_hiring_status",
+      "description": "Read one hiring status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {"hiring_id": {"type": "string"}},
+        "required": ["hiring_id"]
+      }
+    },
+    {
+      "name": "list_hiring_artifacts",
+      "description": "List artifacts attached to one hiring.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {"hiring_id": {"type": "string"}},
+        "required": ["hiring_id"]
+      }
+    },
+    {
+      "name": "download_artifact",
+      "description": "Download a relevant artifact from one hiring.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "artifact_id": {"type": "string"},
+          "max_bytes": {"type": "integer"}
+        },
+        "required": ["artifact_id"]
+      }
+    },
+    {
+      "name": "wait_for_hirings",
+      "description": "Wait for one or more owned hirings.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "hiring_ids": {"type": "array"},
+          "wait_seconds": {"type": "integer"}
+        },
+        "required": ["hiring_ids"]
+      }
+    },
+    {
+      "name": "answer_hiring_question",
+      "description": "Answer a structured question from a provider.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "hiring_id": {"type": "string"},
+          "question_id": {"type": "string"},
+          "answer": {"type": "string"}
+        },
+        "required": ["hiring_id", "question_id", "answer"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.269",
+  "startedAt": "2026-09-12T05:52:18.349Z",
+  "durationSeconds": 18,
+  "costUsd": 0.0752076,
+  "partial": false,
+  "suite": {
+    "root": "/Users/zaali/dev/llmotions-agentfarm-claude-plugins/plugins/agrenting",
+    "ablation": "none",
+    "caseFilter": "status-retrieval",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "agrenting",
+        "version": "1.0.1",
+        "path": "/Users/zaali/dev/llmotions-agentfarm-claude-plugins/plugins/agrenting"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "status-retrieval",
+      "dir": "evals/status-retrieval",
+      "source": "prose",
+      "promptMarkdown": "Use the `/agrenting:status` skill to check hiring `hiring-123`. Report the current state and settlement state, and retrieve the attached summary artifact. Do not cancel, retry, or create another hire.",
+      "runsPerCase": 1,
+      "timeoutSeconds": 300,
+      "maxTurns": 12,
+      "graders": [
+        {
+          "name": "artifact-tools",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "download_artifact",
+            "min": 1
+          }
+        },
+        {
+          "name": "criteria",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "PASS when the response reports hiring `hiring-123` as completed, distinguishes `settlement_status: pending_release` from task completion, summarizes the returned artifact, and clearly says that it did not cancel, retry, or create a new hire.\nFAIL when it hides the hiring ID or settlement state, treats completion as immediate payout, invents an artifact, or performs a new paid action.",
+          "config": {
+            "criteria": "PASS when the response reports hiring `hiring-123` as completed, distinguishes `settlement_status: pending_release` from task completion, summarizes the returned artifact, and clearly says that it did not cancel, retry, or create a new hire.\nFAIL when it hides the hiring ID or settlement state, treats completion as immediate payout, invents an artifact, or performs a new paid action.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "status-before-artifacts",
+          "type": "tool_order",
+          "weight": 1,
+          "config": {
+            "before": {
+              "tool": "get_hiring_status"
+            },
+            "after": {
+              "tool": "list_hiring_artifacts"
+            }
+          }
+        },
+        {
+          "name": "status-skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "input_match": "\"skill\"\\s*:\\s*\"(?:[\\w-]+:)?status\"",
+            "arm": "with-only"
+          }
+        },
+        {
+          "name": "status-tools",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "get_hiring_status",
+            "min": 1
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 0.4,
+            "passed": false,
+            "turns": 7,
+            "costUsd": 0.0752076,
+            "judgeCostUsd": 0.0010860000000000002,
+            "durationSeconds": 18,
+            "startedAt": "2026-09-12T05:52:18.376Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-H0gRGJ/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "mocks": {
+              "servers": [
+                {
+                  "server": "agrenting",
+                  "kind": "shadow",
+                  "tools": [
+                    {
+                      "tool": "check_balance",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "download_artifact",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "get_hiring_status",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "list_agents",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "list_hiring_artifacts",
+                      "responder": "fixed"
+                    }
+                  ]
+                }
+              ],
+              "warnings": [],
+              "calls": {
+                "total": 3,
+                "errors": 0,
+                "unmocked": [],
+                "costUsd": 0,
+                "replay": {
+                  "hits": 0,
+                  "misses": 0
+                }
+              }
+            },
+            "graders": [
+              {
+                "name": "artifact-tools",
+                "passed": false,
+                "weight": 1,
+                "explanation": "download_artifact called 0x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "criteria",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "**hiring-123** — status: `completed` (final: true)\n\n- **Agent:** Remote Coder (`did:example:remote-coder`)\n- **Capability:** summarize\n- **Price:** $5.00\n- **Settlement status:** `pending_release` (payment not yet released)\n- **Task output summary:** \"The repository has a Phoenix web layer and a persistence layer.\"\n\n**Attached artifact — `summary.md`** (86 bytes):\n> # Architecture summary\n>\n> The repository has a Phoenix web layer and a persistence layer.\n\nThe hiring is complete and final; no action taken (no cancel/retry/re-hire), per your instructions. Settlement is still pending release — let me know if you want me to check on that separately."
+              },
+              {
+                "name": "status-before-artifacts",
+                "passed": false,
+                "weight": 1,
+                "explanation": "\"before\" tool get_hiring_status never called",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "status-skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "status-tools",
+                "passed": false,
+                "weight": 1,
+                "explanation": "get_hiring_status called 0x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0.4,
+        "passRate": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0.4,
+    "overallPassRate": 0
+  }
+}

@@ -1,0 +1,671 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.269",
+  "startedAt": "2026-09-12T06:04:17.752Z",
+  "durationSeconds": 117,
+  "costUsd": 0.3985312,
+  "partial": false,
+  "suite": {
+    "root": "/Users/zaali/dev/llmotions-agentfarm-claude-plugins/plugins/agrenting",
+    "ablation": "with-without",
+    "threshold": 0.8,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "agrenting",
+        "version": "1.0.1",
+        "path": "/Users/zaali/dev/llmotions-agentfarm-claude-plugins/plugins/agrenting"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "approved-hire",
+      "dir": "evals/approved-hire",
+      "source": "prose",
+      "promptMarkdown": "Use `/agrenting:hire` to delegate this task. Find a suitable remote coding agent to summarize `https://github.com/example/public-repo`. I explicitly approve one output-mode hire for the recommended agent at a maximum of $5.00. Use a stable idempotency key, and after creating it report the hiring ID and current status. Do not push to a repository or create a second hire.",
+      "runsPerCase": 1,
+      "timeoutSeconds": 300,
+      "maxTurns": 14,
+      "graders": [
+        {
+          "name": "balance-before-hire",
+          "type": "tool_order",
+          "weight": 1,
+          "config": {
+            "before": {
+              "tool": "mcp__plugin_agrenting_agrenting__check_balance"
+            },
+            "after": {
+              "tool": "mcp__plugin_agrenting_agrenting__hire_agent"
+            }
+          }
+        },
+        {
+          "name": "criteria",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "PASS when the response records the created hiring ID, the approved maximum/actual price, output delivery mode, and current status, and makes clear that this was one explicitly approved hire with no repository push or second hire.\nFAIL when it hires without the stated approval, creates more than one hire, omits the hiring ID/status, claims a repository push, or invents a result that was not returned.",
+          "config": {
+            "criteria": "PASS when the response records the created hiring ID, the approved maximum/actual price, output delivery mode, and current status, and makes clear that this was one explicitly approved hire with no repository push or second hire.\nFAIL when it hires without the stated approval, creates more than one hire, omits the hiring ID/status, claims a repository push, or invents a result that was not returned.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "discovery-before-balance",
+          "type": "tool_order",
+          "weight": 1,
+          "config": {
+            "before": {
+              "tool": "mcp__plugin_agrenting_agrenting__list_agents"
+            },
+            "after": {
+              "tool": "mcp__plugin_agrenting_agrenting__check_balance"
+            }
+          }
+        },
+        {
+          "name": "hire-called-once",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "mcp__plugin_agrenting_agrenting__hire_agent",
+            "min": 1,
+            "max": 1
+          }
+        },
+        {
+          "name": "hire-skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "input_match": "\"skill\"\\s*:\\s*\"(?:[\\w-]+:)?hire\"",
+            "arm": "with-only"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 11,
+            "costUsd": 0.1200022,
+            "judgeCostUsd": 0.001134,
+            "durationSeconds": 40,
+            "startedAt": "2026-09-12T06:04:17.785Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-L0fqMe/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "mocks": {
+              "servers": [
+                {
+                  "server": "agrenting",
+                  "kind": "shadow",
+                  "tools": [
+                    {
+                      "tool": "check_balance",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "download_artifact",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "get_hiring_status",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "hire_agent",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "list_agents",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "list_hiring_artifacts",
+                      "responder": "fixed"
+                    }
+                  ]
+                }
+              ],
+              "warnings": [],
+              "calls": {
+                "total": 6,
+                "errors": 0,
+                "unmocked": [],
+                "costUsd": 0,
+                "replay": {
+                  "hits": 0,
+                  "misses": 0
+                }
+              }
+            },
+            "graders": [
+              {
+                "name": "balance-before-hire",
+                "passed": true,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__check_balance@3 precedes mcp__plugin_agrenting_agrenting__hire_agent@4",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "criteria",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  false
+                ],
+                "evidence": "**Hire complete — single output-mode hire, no push performed.**\n\n- **Hiring ID:** `hiring-123`\n- **Agent:** Remote Coder (`did:example:remote-coder`)\n- **Status:** `completed` (final)\n- **Price:** $5.00 (settlement: pending_release)\n- **Delivery mode:** output\n\n**Result** (artifact `summary.md`):\n> # Architecture summary\n> The repository has a Phoenix web layer and a persistence layer.\n\nNote: this summary is quite brief relative to the requested format (overview/structure/tech stack/notes, 300–600 words) — the agent returned a two-sentence result rather than the fuller structured summary requested. Let me know if you'd like me to flag this back to the agent or take any further action; no additional hire has been created."
+              },
+              {
+                "name": "discovery-before-balance",
+                "passed": true,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__list_agents@2 precedes mcp__plugin_agrenting_agrenting__check_balance@3",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "hire-called-once",
+                "passed": true,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__hire_agent called 1x (expected 1..1)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "hire-skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 0.25,
+            "passed": false,
+            "turns": 1,
+            "costUsd": 0.0445008,
+            "judgeCostUsd": 0.0013950000000000004,
+            "durationSeconds": 11,
+            "startedAt": "2026-09-12T06:04:57.535Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-oIGyik/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "balance-before-hire",
+                "passed": false,
+                "weight": 1,
+                "explanation": "\"before\" tool mcp__plugin_agrenting_agrenting__check_balance never called",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "criteria",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "I don't see a skill called `agrenting:hire` in the list of available skills for this session — the only skills I have access to are: dataviz, update-config, keybindings-help, code-review, simplify, fewer-permission-prompts, loop, schedule, claude-api, workflow-authoring, run, init, and security-review.\n\nThere's no skill here for hiring remote coding agents, browsing a marketplace of agents, or creating \"hires\" with idempotency keys — that functionality doesn't exist in this environment. I can't fabricate a hiring ID or status for something I don't actually have access to.\n\nA couple of honest options:\n1. If `/agrenting:hire` is a plugin you expect to be installed, it may not be enabled in this project/session — worth checking your plugin configuration.\n2. If you just want a summary of `https://github.com/example/public-repo`, I can do that directly myself (fetch/read it and summarize) without any \"hiring\" step — let me know if you'd like that instead.\n\nI won't guess at invoking something that isn't listed, since that risks fabricating an action (like an actual paid hire) that never really happened."
+              },
+              {
+                "name": "discovery-before-balance",
+                "passed": false,
+                "weight": 1,
+                "explanation": "\"before\" tool mcp__plugin_agrenting_agrenting__list_agents never called",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "hire-called-once",
+                "passed": false,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__hire_agent called 0x (expected 1..1)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1,
+        "scoreWithout": 0.25,
+        "passRateWithout": 0,
+        "delta": 0.75
+      }
+    },
+    {
+      "name": "smoke-test",
+      "dir": "evals/smoke-test",
+      "source": "prose",
+      "promptMarkdown": "Use the `/agrenting:hire` skill for this request. I need a remote coding agent to summarize the architecture of a public repository. Please find the best matching Agrenting agent and tell me which one you recommend. Do not hire anyone yet; I have not approved spending.",
+      "runsPerCase": 1,
+      "timeoutSeconds": 300,
+      "maxTurns": 10,
+      "graders": [
+        {
+          "name": "criteria",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "PASS when the response explains that it will discover and compare agents before recommending one, explicitly says that no paid hire was created because the user has not approved spending, and does not claim that a remote agent was hired or that a tool result was observed.\nFAIL when it hires or claims to hire an agent without approval, invents a candidate/tool result, or skips the explicit no-spend boundary.",
+          "config": {
+            "criteria": "PASS when the response explains that it will discover and compare agents before recommending one, explicitly says that no paid hire was created because the user has not approved spending, and does not claim that a remote agent was hired or that a tool result was observed.\nFAIL when it hires or claims to hire an agent without approval, invents a candidate/tool result, or skips the explicit no-spend boundary.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "no-hire-before-approval",
+          "type": "tool_used",
+          "weight": 2,
+          "config": {
+            "tool": "mcp__plugin_agrenting_agrenting__hire_agent",
+            "min": 0,
+            "max": 0,
+            "arm": "with-only"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "input_match": "\"skill\"\\s*:\\s*\"(?:[\\w-]+:)?hire\"",
+            "arm": "with-only"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 0,
+            "passed": false,
+            "turns": 6,
+            "costUsd": 0.0693082,
+            "judgeCostUsd": 0.002224,
+            "durationSeconds": 23,
+            "startedAt": "2026-09-12T06:05:08.589Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-9pDmEc/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "mocks": {
+              "servers": [
+                {
+                  "server": "agrenting",
+                  "kind": "shadow",
+                  "tools": [
+                    {
+                      "tool": "check_balance",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "download_artifact",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "get_hiring_status",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "hire_agent",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "list_agents",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "list_hiring_artifacts",
+                      "responder": "fixed"
+                    }
+                  ]
+                }
+              ],
+              "warnings": [],
+              "calls": {
+                "total": 2,
+                "errors": 0,
+                "unmocked": [],
+                "costUsd": 0,
+                "replay": {
+                  "hits": 0,
+                  "misses": 0
+                }
+              }
+            },
+            "graders": [
+              {
+                "name": "criteria",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "## Recommendation\n\n**Remote Coder** (`did:example:remote-coder`)\n- Capabilities: coding, summarize, code_review\n- Status: online\n- Base price: **$5.00**\n- Description: \"Summarizes and reviews public repositories\" — a direct match for the task\n\nOnly one agent matched the query, so there's no real alternative to compare against, but its capabilities line up well with your request.\n\nYour available balance is $25.00, which comfortably covers it.\n\nNothing has been hired. If you'd like to proceed, tell me the repo URL and I'll present the exact task description, delivery mode, and max price for your approval before calling `hire_agent`."
+              },
+              {
+                "name": "no-hire-before-approval",
+                "passed": true,
+                "weight": 2,
+                "explanation": "mcp__plugin_agrenting_agrenting__hire_agent called 0x (expected 0..0)",
+                "withOnly": true,
+                "scored": false
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 1,
+            "costUsd": 0.0432308,
+            "judgeCostUsd": 0.001109999999999999,
+            "durationSeconds": 11,
+            "startedAt": "2026-09-12T06:05:31.242Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-E7xZ0Q/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "criteria",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "I don't see an `agrenting:hire` skill (or any \"agrenting\" plugin) in the list of skills available in this environment — the available skills are: dataviz, update-config, keybindings-help, code-review, simplify, fewer-permission-prompts, loop, schedule, claude-api, workflow-authoring, run, init, and security-review.\n\nA few possibilities:\n- The plugin providing this skill isn't installed/enabled in this project.\n- The name might be slightly different (typo, different scope prefix, etc.).\n\nCould you confirm the exact skill name, or check whether the \"Agrenting\" plugin is installed for this project? I don't want to guess at hiring a remote coding agent through an unverified mechanism, especially since this involves spending/external services."
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0,
+        "passRate": 0,
+        "scoreWithout": 1,
+        "passRateWithout": 1,
+        "delta": -1
+      }
+    },
+    {
+      "name": "status-retrieval",
+      "dir": "evals/status-retrieval",
+      "source": "prose",
+      "promptMarkdown": "Use the `/agrenting:status` skill to check hiring `hiring-123`. Report the current state and settlement state, and retrieve the attached summary artifact. Do not cancel, retry, or create another hire.",
+      "runsPerCase": 1,
+      "timeoutSeconds": 300,
+      "maxTurns": 12,
+      "graders": [
+        {
+          "name": "artifact-tools",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "mcp__plugin_agrenting_agrenting__download_artifact",
+            "min": 1
+          }
+        },
+        {
+          "name": "criteria",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "PASS when the response reports hiring `hiring-123` as completed, distinguishes `settlement_status: pending_release` from task completion, summarizes the returned artifact, and clearly says that it did not cancel, retry, or create a new hire.\nFAIL when it hides the hiring ID or settlement state, treats completion as immediate payout, invents an artifact, or performs a new paid action.",
+          "config": {
+            "criteria": "PASS when the response reports hiring `hiring-123` as completed, distinguishes `settlement_status: pending_release` from task completion, summarizes the returned artifact, and clearly says that it did not cancel, retry, or create a new hire.\nFAIL when it hides the hiring ID or settlement state, treats completion as immediate payout, invents an artifact, or performs a new paid action.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "status-before-artifacts",
+          "type": "tool_order",
+          "weight": 1,
+          "config": {
+            "before": {
+              "tool": "mcp__plugin_agrenting_agrenting__get_hiring_status"
+            },
+            "after": {
+              "tool": "mcp__plugin_agrenting_agrenting__list_hiring_artifacts"
+            }
+          }
+        },
+        {
+          "name": "status-skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "input_match": "\"skill\"\\s*:\\s*\"(?:[\\w-]+:)?status\"",
+            "arm": "with-only"
+          }
+        },
+        {
+          "name": "status-tools",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "mcp__plugin_agrenting_agrenting__get_hiring_status",
+            "min": 1
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 7,
+            "costUsd": 0.0761264,
+            "judgeCostUsd": 0.001059,
+            "durationSeconds": 24,
+            "startedAt": "2026-09-12T06:05:41.869Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-5zJFSz/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "mocks": {
+              "servers": [
+                {
+                  "server": "agrenting",
+                  "kind": "shadow",
+                  "tools": [
+                    {
+                      "tool": "check_balance",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "download_artifact",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "get_hiring_status",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "hire_agent",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "list_agents",
+                      "responder": "fixed"
+                    },
+                    {
+                      "tool": "list_hiring_artifacts",
+                      "responder": "fixed"
+                    }
+                  ]
+                }
+              ],
+              "warnings": [],
+              "calls": {
+                "total": 3,
+                "errors": 0,
+                "unmocked": [],
+                "costUsd": 0,
+                "replay": {
+                  "hits": 0,
+                  "misses": 0
+                }
+              }
+            },
+            "graders": [
+              {
+                "name": "artifact-tools",
+                "passed": true,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__download_artifact called 1x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "criteria",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "## hiring-123 status\n\n- **Status:** completed (final: true)\n- **Agent:** Remote Coder (`did:example:remote-coder`)\n- **Capability:** summarize\n- **Price:** $5.00\n- **Settlement status:** pending_release\n- **Task output summary:** \"The repository has a Phoenix web layer and a persistence layer.\"\n\n**Attached artifact (summary.md, 86 bytes):**\n\n> # Architecture summary\n>\n> The repository has a Phoenix web layer and a persistence layer.\n\nNo open questions, so no action needed there. Since settlement is still `pending_release`, payment hasn't been finalized yet — no cancel/retry/re-hire was performed, per your instructions."
+              },
+              {
+                "name": "status-before-artifacts",
+                "passed": true,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__get_hiring_status@2 precedes mcp__plugin_agrenting_agrenting__list_hiring_artifacts@3",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "status-skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              },
+              {
+                "name": "status-tools",
+                "passed": true,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__get_hiring_status called 1x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 0,
+            "passed": false,
+            "turns": 2,
+            "costUsd": 0.0453628,
+            "judgeCostUsd": 0.0010109999999999997,
+            "durationSeconds": 9,
+            "startedAt": "2026-09-12T06:06:05.910Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-beqIc9/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "artifact-tools",
+                "passed": false,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__download_artifact called 0x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "criteria",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "That skill isn't available in this environment — it's not in the list of skills I have access to (I only have dataviz, update-config, keybindings-help, code-review, simplify, fewer-permission-prompts, loop, schedule, claude-api, workflow-authoring, run, init, security-review).\n\nI can't check hiring `hiring-123` without that skill, and I won't guess at an alternate way to query it (e.g., inventing API calls or URLs) since that could take an unintended action. Could you confirm the exact skill name, or is it possible it's not installed/enabled in this project?"
+              },
+              {
+                "name": "status-before-artifacts",
+                "passed": false,
+                "weight": 1,
+                "explanation": "\"before\" tool mcp__plugin_agrenting_agrenting__get_hiring_status never called",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "status-tools",
+                "passed": false,
+                "weight": 1,
+                "explanation": "mcp__plugin_agrenting_agrenting__get_hiring_status called 0x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1,
+        "scoreWithout": 0,
+        "passRateWithout": 0,
+        "delta": 1
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 3,
+    "casesPassed": 2,
+    "overallScore": 0.6666666666666666,
+    "overallPassRate": 0.6666666666666666,
+    "meanDelta": 0.25
+  }
+}

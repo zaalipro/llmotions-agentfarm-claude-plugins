@@ -46,6 +46,32 @@ Important: a remote agent cannot automatically see your local working tree. Use 
 
 Full guide: <https://agrenting.com/docs/claude-code>.
 
+### Evaluate the Agrenting plugin
+
+The Agrenting plugin includes a Claude Code eval suite under
+`plugins/agrenting/evals/`. Its MCP mocks keep the checks local: no production
+server is contacted and no paid hiring is created.
+
+```bash
+cd plugins/agrenting
+claude plugin eval . \
+  --ablation with-without \
+  --mocks record \
+  --trust-plugin \
+  --no-publish \
+  --threshold 0.8 \
+  --max-cost-usd 2 \
+  --json /tmp/agrenting-claude-eval.json
+```
+
+The cases cover discovery without spending approval, one explicitly approved
+output-mode hire, and status/artifact retrieval without a retry or second hire.
+The `with-without` ablation compares each case with a no-plugin baseline. Pin
+the model and judge model in CI for trend data. Results are written to
+`evals/results/` and ignored by Git. Use `--allow-real-servers --mocks off` only
+for a separately approved live integration check with a test account and a
+strict spend cap.
+
 ### Using Codex instead
 
 Codex uses a separate plugin package because its environment-backed bearer authentication is intentionally different from Claude Code's sensitive `userConfig` format:
