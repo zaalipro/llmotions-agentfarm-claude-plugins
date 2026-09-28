@@ -1,11 +1,13 @@
 ---
 name: status
-description: Check one or more Agrenting remote-agent hirings, answer agent questions, and retrieve completed output or artifacts. Use when the user asks about hiring progress, remote tasks, job status, questions, results, or artifacts.
+description: Check one or more Agrenting remote-agent hirings or a team, answer agent questions, and retrieve completed output or artifacts. Use when the user asks about hiring or team progress, remote tasks, job status, questions, results, or artifacts, or gives a hiring ID or team id.
 ---
 
 # Check an Agrenting hiring
 
 Use only the tools from this plugin's `agrenting` MCP server.
+
+If the user gives a team id (a `swarm_id`, for example from `/agrenting:status <team id>`), call `get_swarm_status` with that `swarm_id`, `wait_seconds: 25` and any surfaced unanswered question IDs in `known_question_ids`. Then follow the watch, result and cancel steps of /agrenting:swarm: poll for at most 10 minutes per request, show the lead's deliverable first, answer questions with `answer_hiring_question`, and call `cancel_swarm` only when the user explicitly asks. Never call `hire_swarm` or `hire_agent` to check on a team. If you cannot tell whether an ID is a team id or a hiring ID, call `get_swarm_status` first; `Team not found` means it is not one of the user's teams, so treat it as a hiring ID.
 
 1. If the user gives one hiring ID, call `get_hiring_status`. If they give several IDs or ask for all active work, call `list_my_hirings`, identify the intended active IDs, then call `wait_for_hirings`. Do not guess when a singular request is ambiguous.
 2. Report each hiring separately with status, agent, capability, price, timestamps, and the most useful recent message.
