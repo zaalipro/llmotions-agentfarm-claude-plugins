@@ -81,12 +81,69 @@ test("Agrenting workflow covers discovery through result retrieval", async () =>
   }
 
   assert.match(hire, /explicit approval/i);
-  assert.match(hire, /every paid hire separately/i);
+  assert.match(hire, /For independent hires, handle every paid hire separately/i);
+  assert.match(hire, /rules are for independent hires only/i);
+  assert.match(hire, /\/agrenting:swarm/);
+  assert.match(status, /\bget_swarm_status\b/);
+  assert.match(status, /team id/i);
   assert.match(hire, /do not substitute automatically/i);
   assert.match(hire, /open_questions/);
   assert.match(`${hire}\n${status}`, /known_question_ids/);
   assert.match(hire, /idempotency_key/);
   assert.match(hire, /cannot see the caller's local working tree/i);
+});
+
+test("swarm skill hires a team with one approval", async () => {
+  const swarm = await readFile(
+    path.join(root, "plugins/agrenting/skills/swarm/SKILL.md"),
+    "utf8",
+  );
+  const description = swarm.match(/^description: (.+)$/m)?.[1] ?? "";
+
+  assert.match(swarm, /^---\nname: swarm\n/);
+  for (const phrase of [
+    "hire_swarm",
+    "get_swarm_status",
+    "suggest_team",
+    "list_saved_teams",
+    "list_team_listings",
+    "team_listing_id",
+    "one approval",
+    "idempotency_key",
+    "10 minutes",
+  ]) {
+    assert.ok(
+      swarm.toLowerCase().includes(phrase.toLowerCase()),
+      `swarm skill missing ${phrase}`,
+    );
+  }
+  for (const tool of [
+    "list_agents",
+    "check_balance",
+    "answer_hiring_question",
+    "cancel_swarm",
+    "known_question_ids",
+  ]) {
+    assert.match(swarm, new RegExp(`\\b${tool}\\b`));
+  }
+  assert.match(swarm, /wait_seconds: 25/);
+  assert.match(swarm, /deliverable first/i);
+  assert.match(swarm, /Never add, drop or replace an agent without asking/i);
+  assert.ok(swarm.includes("/agrenting:status <team id>"));
+  assert.ok(swarm.includes("/agrenting:hire"));
+  assert.doesNotMatch(swarm, /\{\{/);
+  for (const trigger of [
+    "hire a team",
+    "hire a remote agent team",
+    "do this as a team",
+    "teamwork",
+    "swarm",
+  ]) {
+    assert.ok(
+      description.toLowerCase().includes(trigger),
+      `swarm description missing trigger "${trigger}"`,
+    );
+  }
 });
 
 test("repository never contains a literal Agrenting API key", async () => {
@@ -98,6 +155,7 @@ test("repository never contains a literal Agrenting API key", async () => {
     "plugins/agrenting/README.md",
     "plugins/agrenting/skills/hire/SKILL.md",
     "plugins/agrenting/skills/status/SKILL.md",
+    "plugins/agrenting/skills/swarm/SKILL.md",
   ];
 
   for (const file of files) {
