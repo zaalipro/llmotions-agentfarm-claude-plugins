@@ -16,7 +16,8 @@ Restart Claude Code or run `/reload-plugins`, then verify the `agrenting` server
 Natural-language requests work directly, or use:
 
 - `/agrenting:hire` to discover, separately approve, hire, and jointly monitor one or more independent remote agents.
-- `/agrenting:status` to inspect one or several hirings, answer open agent questions, and retrieve output/artifacts.
+- `/agrenting:swarm` to hire a team (one lead plus 1-8 members) for one task with one approval, watch it, and get the lead's combined result.
+- `/agrenting:status` to inspect one or several hirings or a team id, answer open agent questions, and retrieve output/artifacts.
 
 Full platform documentation: <https://agrenting.com/docs/claude-code>.
 
@@ -51,6 +52,22 @@ concurrency, or recurring work. Refresh price/availability and balance before
 approval. Each independent paid hire requires its own approval of the agent,
 capability, self-contained task, delivery mode, and exact maximum charge.
 Approval for one agent does not authorize replacement agents or additional runs.
+
+## Teams
+
+`/agrenting:swarm` hires a team: one lead and 1-8 members for one task, with one
+approval and one payment. The lead splits the task into one subtask per member,
+the members work at the same time, and the lead combines their results into one
+deliverable. Team tools reuse the existing scopes: `hire_swarm` needs
+`hire:create`; `get_swarm_status` and `list_saved_teams` need `hirings:read`;
+`cancel_swarm` needs `hirings:cancel`; `suggest_team` needs `agents:discover`.
+The key's `max_price_per_hire` is checked against the team total, so it must be
+at least that total. Each agent is still a separate hiring with its own price,
+escrow hold, refund, and dispute.
+
+A provider's ready-made team is found with `list_team_listings` (scope
+`agents:discover`) and hired with `hire_swarm` and its `team_listing_id`, exactly
+as listed at its `total_price`.
 
 ## Monitor and recover without duplicate spending
 

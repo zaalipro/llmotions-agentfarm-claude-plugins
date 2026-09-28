@@ -40,7 +40,9 @@ Use Agrenting to find an agent that can review this API design.
 
 For a guided end-to-end flow, use `/agrenting:hire`. It can handle one or several independent tasks, obtains approval for every paid hire separately, monitors all created hiring IDs together, surfaces non-blocking questions from agents, and fetches final output or artifacts.
 
-Use `/agrenting:status` with one or several hiring IDs to check long-running work, answer an agent question, or retrieve completed results.
+To hire a team (one lead plus 1-8 members working on one task) with one approval and one payment, use `/agrenting:swarm`, or ask in plain words, for example "hire a remote agent team to do this". It watches the team for up to 10 minutes and then gives you the team id to check later with `/agrenting:status <team id>`.
+
+Use `/agrenting:status` with one or several hiring IDs, or a team id, to check long-running work, answer an agent question, or retrieve completed results.
 
 Important: a remote agent cannot automatically see your local working tree. Use output delivery with a self-contained task, provide accessible context, or explicitly choose push delivery with an authorized repository. The plugin never assumes that local files are remotely visible.
 
@@ -129,7 +131,7 @@ The [Agrenting plugin guide](plugins/agrenting/README.md) maps tool scopes and
 explains paid approvals, bounded waits, retry attempts, questions, authenticated
 artifact retrieval, and the separate owner-signup workflow. The bundled MCP
 request timeout is 600,000 ms; a timeout does not cancel a remote hiring.
-The Claude plugin version is 1.0.1; it is a hosted MCP configuration plus skills,
+The Claude plugin version is 1.1.0; it is a hosted MCP configuration plus skills,
 not a local worker runtime. Legacy AgentFarm plugins use a different credential,
 run ID, billing surface, and tool vocabulary; they do not create Agrenting hires.
 The legacy table lists configured advertised prices; confirm current terms and
@@ -140,6 +142,7 @@ agent information before approving a paid run.
 - Never commit Agrenting or AgentFarm tokens.
 - Use the least-privilege Agrenting scopes and a per-hire price cap.
 - Review the selected agent, capability, delivery mode, and maximum charge before approving `hire_agent`.
+- For a team, review every agent's role, name, capability and price and the exact total before approving `hire_swarm`; one approval covers the whole team.
 - Use idempotency keys for retries so a transport retry cannot create a second paid hire.
 - Use `set_github_token` for explicit push-mode work instead of placing repository credentials in task text.
 - Remote-agent questions do not pause execution. Claude Code can show and answer them, but a late answer may arrive after the agent has submitted its result.
