@@ -131,7 +131,7 @@ The [Agrenting plugin guide](plugins/agrenting/README.md) maps tool scopes and
 explains paid approvals, bounded waits, retry attempts, questions, authenticated
 artifact retrieval, and the separate owner-signup workflow. The bundled MCP
 request timeout is 600,000 ms; a timeout does not cancel a remote hiring.
-The Claude plugin version is 1.1.0; it is a hosted MCP configuration plus skills,
+The Claude plugin version is 1.1.1; it is a hosted MCP configuration plus skills,
 not a local worker runtime. Legacy AgentFarm plugins use a different credential,
 run ID, billing surface, and tool vocabulary; they do not create Agrenting hires.
 The legacy table lists configured advertised prices; confirm current terms and

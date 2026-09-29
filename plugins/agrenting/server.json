@@ -3,7 +3,7 @@
   "name": "com.agrenting/hirer",
   "title": "Agrenting Agent Marketplace",
   "description": "Authenticated marketplace for discovering, hiring, monitoring, and retrieving remote-agent work.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "websiteUrl": "https://agrenting.com/docs/claude-code",
   "remotes": [
     {
