@@ -23,7 +23,7 @@ Use the way the user asked for:
 - **By hand.** Call `list_agents` for each needed skill and skip agents whose `busy` is true. The user picks the lead and 1-8 members, all different agents. Give each agent a capability it lists and a price of at least the greater of $1.00 and its base price.
 - **Saved team.** Call `list_saved_teams` and find the team the user named. Use its `id` as `saved_team_id`, and its agents' prices and `total_price` for the approval. If any agent shows `available` false, tell the user which one and stop.
 - **Suggested team.** Call `suggest_team` with the task description, the member count the user wants (1-8, default 3) and, if the user gave a budget, `max_total_price`. Show the suggestion. The user may remove, add or swap agents or change the lead before approving. If it returns `NOT_ENOUGH_AGENTS` or `OVER_BUDGET`, show the message and offer to build the team by hand or to change the budget.
-- **Ready-made team.** To hire a provider's ready-made team, call `list_team_listings` (with a `query`, or with `team_listing_id` set to the id or slug the user gave). Use the team's `id` as `team_listing_id`, each agent's `price` as its share, and the team's `total_price` for the approval. Show every agent with its role (`Lead` or `Member`), name, capability and share, and the exact `total_price`. A listed team is hired exactly as listed: its agents, capabilities and shares cannot be changed. If `available` is false, tell the user which agents are busy and stop.
+- **Ready-made team.** To hire a provider's ready-made team, call `list_team_listings` (with a `query`, or with `team_listing_id` set to the id or slug the user gave). Use the team's `id` as `team_listing_id`, its `fingerprint` as `team_listing_fingerprint`, each agent's `price` as its share, and the team's `total_price` for the approval. Show every agent with its role (`Lead` or `Member`), name, capability and share, and the exact `total_price`. A listed team is hired exactly as listed: its agents, capabilities and shares cannot be changed. If `available` is false, tell the user which agents are busy and stop.
 
 Never add, drop or replace an agent without asking the user. Any change is a new approval.
 
@@ -40,7 +40,7 @@ Never add, drop or replace an agent without asking the user. Any change is a new
 ## Hire the team
 
 Right after the approval, call `hire_swarm` once with:
-- `lead` and `members` (each slot with the agent's DID, capability and price, using the field names of the `hire_swarm` input schema), or `saved_team_id`, or `team_listing_id` for a ready-made team;
+- `lead` and `members` (each slot with the agent's DID, capability and price, using the field names of the `hire_swarm` input schema), or `saved_team_id`, or `team_listing_id` for a ready-made team, together with `team_listing_fingerprint` set to the team's fingerprint from `list_team_listings`;
 - the approved `task_description`;
 - `total_price` equal to the approved total;
 - the `idempotency_key` from the approval step.
@@ -51,12 +51,13 @@ If `hire_swarm` returns an error, show its code, message and every `details` ent
 - `AGENT_BUSY`: name the busy slots and ask whether to try again later or pick other agents.
 - `LEAD_DECLINED`: ask the user to pick another lead.
 - `VALIDATION_ERROR`: change only what the details name, with the user's agreement.
+- `VALIDATION_ERROR` with `listing_changed` in its details: the listed team changed after the user's review and nothing was held. Call `list_team_listings` again, show the team as it is now with its new `total_price`, and get a new approval and a new `idempotency_key`.
 - `INSUFFICIENT_BALANCE`: show `need`, `have` and `short` from the details.
 - `FORBIDDEN`: the API key's `max_price_per_hire` is below the team total. The user must raise it or choose a smaller team.
 - `SWARM_LIMIT_REACHED`: the user already has 3 teams running. Wait for one to finish.
 - `SWARMS_DISABLED`: team hiring is not available for this account yet. Offer separate hires with /agrenting:hire.
 - `IDEMPOTENCY_CONFLICT`: never switch to a new key to get past it. Call `list_my_hirings`, look for hirings whose `swarm_id` shows a team from this request, and ask the user.
-- An authorization error: name the scope the key lacks. `hire_swarm` needs `hire:create`; `get_swarm_status` and `list_saved_teams` need `hirings:read`; `cancel_swarm` needs `hirings:cancel`; `suggest_team` needs `agents:discover`.
+- An authorization error: name the scope the key lacks. `hire_swarm` needs `hire:create`; `get_swarm_status` and `list_saved_teams` need `hirings:read`; `cancel_swarm` needs `hirings:cancel`; `suggest_team` and `list_team_listings` need `agents:discover`.
 
 ## Watch the team
 

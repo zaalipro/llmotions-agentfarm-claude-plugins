@@ -10,6 +10,19 @@ async function json(relativePath) {
   return JSON.parse(await readFile(path.join(root, relativePath), "utf8"));
 }
 
+function frontmatterDescription(markdown) {
+  return markdown.match(/^description: (.+)$/m)?.[1] ?? "";
+}
+
+// The text under a "## " heading, up to the next "## " heading ("" if the heading is gone).
+function section(markdown, heading) {
+  const start = markdown.indexOf(`${heading}\n`);
+  if (start === -1) return "";
+  const rest = markdown.slice(start + heading.length);
+  const end = rest.indexOf("\n## ");
+  return end === -1 ? rest : rest.slice(0, end);
+}
+
 test("marketplace entries are unique and point to matching plugins", async () => {
   const marketplace = await json(".claude-plugin/marketplace.json");
   const names = marketplace.plugins.map((plugin) => plugin.name);
@@ -143,6 +156,70 @@ test("swarm skill hires a team with one approval", async () => {
       description.toLowerCase().includes(trigger),
       `swarm description missing trigger "${trigger}"`,
     );
+  }
+});
+
+test("hire skill description routes a team to the swarm skill", async () => {
+  const hire = await readFile(
+    path.join(root, "plugins/agrenting/skills/hire/SKILL.md"),
+    "utf8",
+  );
+
+  assert.ok(
+    frontmatterDescription(hire).includes("use the swarm skill instead"),
+    "hire description must send a team request to the swarm skill",
+  );
+});
+
+test("swarm skill keeps its approval, ready-made hire and scope guidance", async () => {
+  const swarm = await readFile(
+    path.join(root, "plugins/agrenting/skills/swarm/SKILL.md"),
+    "utf8",
+  );
+  const approval = section(swarm, "## Get one approval");
+  const build = section(swarm, "## Build the team");
+  const hire = section(swarm, "## Hire the team");
+
+  assert.ok(
+    approval.includes("This one approval covers every agent in the team"),
+    "swarm skill must keep the Get one approval section and its coverage rule",
+  );
+  assert.ok(
+    hire.includes("`team_listing_id` for a ready-made team"),
+    "Hire the team must name team_listing_id for a ready-made team",
+  );
+  assert.ok(
+    build.includes("its `fingerprint` as `team_listing_fingerprint`"),
+    "Build the team must take the listed team's fingerprint",
+  );
+  assert.ok(
+    hire.includes(
+      "`team_listing_fingerprint` set to the team's fingerprint from `list_team_listings`",
+    ),
+    "Hire the team must send team_listing_fingerprint from list_team_listings",
+  );
+  assert.ok(
+    hire.includes("`listing_changed`"),
+    "Hire the team must say what to do when the listed team changed",
+  );
+  assert.ok(
+    hire.includes("`suggest_team` and `list_team_listings` need `agents:discover`"),
+    "Hire the team must name agents:discover for list_team_listings",
+  );
+});
+
+test("plugin README documents teams and counts a team as one hire", async () => {
+  const readme = (
+    await readFile(path.join(root, "plugins/agrenting/README.md"), "utf8")
+  ).replace(/\s+/g, " ");
+
+  for (const phrase of [
+    "## Teams",
+    "list_team_listings",
+    "team_listing_id",
+    "a team hire counts as one hire at its total",
+  ]) {
+    assert.ok(readme.includes(phrase), `plugin README missing ${phrase}`);
   }
 });
 

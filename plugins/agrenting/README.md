@@ -47,10 +47,11 @@ Set both a conservative API-key `max_price_per_hire` and an approved `max_price`
 on every `hire_agent` call. Despite its name, MCP `max_price` becomes the actual
 hiring price held in escrow; it is not a ceiling from which the server negotiates
 a lower charge. Use the exact approved offer (at least the current base price),
-without padding it. The key cap bounds each hire, not aggregate spending,
-concurrency, or recurring work. Refresh price/availability and balance before
-approval. Each independent paid hire requires its own approval of the agent,
-capability, self-contained task, delivery mode, and exact maximum charge.
+without padding it. The key cap bounds each hire (a team hire counts as one
+hire at its total), not aggregate spending, concurrency, or recurring work.
+Refresh price/availability and balance before approval. Each independent paid
+hire requires its own approval of the agent, capability, self-contained task,
+delivery mode, and exact maximum charge.
 Approval for one agent does not authorize replacement agents or additional runs.
 
 ## Teams
